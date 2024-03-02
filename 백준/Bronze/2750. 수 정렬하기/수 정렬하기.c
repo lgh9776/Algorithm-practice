@@ -1,22 +1,21 @@
+//Insertion Sort
 #include<stdio.h>
 
-void selectionSort(int a[], int c)
+void insertionSort(int a[], int c)
 {
-	int min = a[0];
-	int minIdx = 0;
+	int n, temp;
 
-	for (int i = 0; i < c;) {
-		for (int j = i + 1; j < c; j++) {
-			if (min > a[j]) {
-				min = a[j];
-				minIdx = j;
+	for (int i = 0; i < c; i++) {
+		n = a[i];
+		for (int j = i - 1; j >= 0; j--) {
+			if (n >= a[j]) {
+				break;
+			}
+			else if (n < a[j]) {
+				a[j + 1] = a[j];
+				a[j] = n;
 			}
 		}
-		a[minIdx] = a[i];
-		a[i] = min;
-
-		min = a[++i];
-		minIdx = i;
 	}
 }
 
@@ -29,7 +28,7 @@ int main()
 	for (int i = 0; i < cnt; i++)
 		scanf("%d", &num[i]);
 
-	selectionSort(num, cnt);
+	insertionSort(num, cnt);
 
 	for (int i = 0; i < cnt; i++)
 		printf("%d ", num[i]);
