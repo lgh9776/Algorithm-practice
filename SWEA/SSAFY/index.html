@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<!-- document type = html, 이 문서가 html 문서임을 명시 -->
+<html> <!-- dom 구조의 최상위 노드로 HTML 요소의 시작과 끝을 나타냄-->
+  <head> <!-- 메타데이터 요소가 포함된 section -->
+    <meta charset="UTF-8" /> <!-- 해당 html 문서의 인코딩 방식을 명시 -->
+    <title>SSAFY BOOK CAFE</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 모바일 브라우저의 뷰포트 크기 조절을 위해 사용 -->
+    <link rel="shortcut icon" href="img/favicon.ico" />
+    <link href="./css/main.css" rel="stylesheet" type="text/css">
+    <script src="./js/cafe.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <header>
+      <!-- 앵커태그와 href 속성으로 페이지 이동 가능-->
+      <!-- 현재는 이동할 주소가 비어있지만 href에 주소만 넣어주면 이동 가능 -->
+      <nav class="top_nav">
+        <div class="top_home">
+          <a href="#top_logo" id="top_logo">SSAFY BookCafe</a>
+          <a href="">공지사항</a>
+        </div>
+
+        <div class="top_menu">
+          <a href="#" id="login" onclick="javascript:login()">로그인</a>
+          <a href="#" id="join">회원가입</a>
+          <a href="#" id="logout" style="display: none">로그아웃</a>
+          <a href="#" id="mypage" style="display: none">마이페이지</a>
+          <a href="#" id="admin" onclick="javascript:vote()" style="display: none">관리자</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="main_left">
+      <section class="main_item1">
+        <div class="item1_img">
+          <img src="./img/noimg.png" id="defaultImg" alt="기본 이미지" width="125" height="125">
+          <img src="./img/profile.png" id="loginImg" alt="프로필 이미지"width="125" height="125" style="display: none;"><br>
+        </div>
+        
+        <div class="btn_menu"> 
+          <a href="#" id="toggle_menu" onclick="javascript:toggleMenu()">전국매장펼치기</a>
+        </div>
+        
+        <ul class="area_list">
+
+          <div id="menu_item1">
+            <li><a href="#" onclick="javascript:toggleArea(1)">서울</a></li>
+            <ul id="menu_ul_item1" style="display: none;">
+              <li>역삼점</li>
+              <li>선릉점</li>
+            </ul>
+          </div>
+
+          <div id="menu_item2">
+            <li><a href="#" onclick="javascript:toggleArea(2)">대전</a></li>
+            <ul id="menu_ul_item2" style="display: none;">
+              <li>학하점</li>
+              <li>봉명점</li>
+            </ul>
+          </div>
+
+          <div id="menu_item3">
+            <li><a href="#" onclick="javascript:toggleArea(3)">구미</a></li>
+            <ul id="menu_ul_item3" style="display: none;">
+              <li>인동점</li>
+              <li>공단점</li>
+            </ul>
+          </div>
+
+          <div id="menu_item4">
+            <li><a href="#" onclick="javascript:toggleArea(4)">광주</a></li>
+            <ul id="menu_ul_item4" style="display: none;">
+              <li>하남신단점</li>
+              <li>광주역점</li>
+            </ul>
+          </div>
+
+        </ul>
+      </section>
+
+      <section> <!--  class="main_item2" -->
+        <!-- 투표가 있는 경우 -->
+        <article id="vote_box" style="display: none;">
+          <div class="item2_name"> [ 당신의 선택 ] </div>
+          
+        </article>
+      
+        <!-- 투표가 없는 경우 -->
+        <article id="noVote_box">
+          진행중인 투표가 없습니다.
+        </article>
+      </section>
+      
+      </div>
+
+      <div class="main_right">
+      <section class="main_item3">
+        <article class="item3_lang">
+          <!-- article2 : 프로그래밍 언어 선택 -->
+          <h3>[ 프로그래밍 언어 ]</h3>
+          <ul>
+            <li> 
+              <!-- img 태그 사용 시 src 속성으로 이미지 경로를 설정하여 이미지 띄움-->
+              <!-- alt 속성을 이용하여 사진 로딩 불가 시 사진 설명 출력 -->
+              <img src="./img/book/p_book01.png" alt="Do it! 점프 투 파이썬" width="130"><br>
+              <div>it! 점프 투 파이썬</div>
+              <div>(18,800원)</div>
+            </li>
+            <li>
+              <img src="./img/book/p_book02.png" alt="HTML5 API 프로그래밍" width="130"><br>
+              <div>HTML5 API 프로그래밍</div>
+              <div>(23,000원)</div>
+            </li>
+            <li>
+              <img src="./img/book/p_book03.png" alt="백견불여일타 Vue.js입문" width="130"><br>
+              <div>백견불여일타 Vue.js입문</div>
+              <div>(22,000원)</div>
+            </li>
+            <li>
+              <img src="./img/book/p_book04.png" alt="Java 프로그래밍" width="130"><br>
+              <div>Java 프로그래밍</div>
+              <div>(26,500원)</div>
+            </li>
+          </ul>
+        </article>
+
+        <article class="item3_essay">
+          <!-- article3 : 에세이 종류 -->
+          <h3>[ 에세이 ]</h3>
+          <ul>
+            <li>
+              <img src="./img/book/e_book01.png" alt="2인조" width="130"><br>
+              <div>2인조</div>
+              <div>(14,800원)</div>
+            </li>
+            <li>
+              <img src="./img/book/e_book02.png" alt="안녕, 소중한 사람" width="130"><br>
+              <div>안녕, 소중한 사람</div>
+              <div>(15,000원)</div>
+            </li>
+            <li>
+              <img src="./img/book/e_book03.png" alt="꽃을 보든 너를 본다" width="130"><br>
+              <div>꽃을 보든 너를 본다</div>
+              <div>(10,000원)</div>
+            </li>
+            <li>
+              <img src="./img/book/e_book04.png" alt="곰돌이 푸, 행복한 일은 매일 있어" width="130"><br>
+              <div>곰돌이 푸, 행복한 일은</div>
+              <div>매일 있어 (12,000원)</div>
+            </li>
+          </ul>
+        </article>
+      </section>
+      
+      <aside class="aside_table">
+        <!-- 본문 외 내용 : 인기글, 최신글을 aside로 빼줌 -->
+        <div class="pop_table">
+        <h3>[ 인기글 ]</h3>
+        <table>
+          <tr> <!-- table row -->
+            <th>제목</th> <!-- table header 굵은 글씨 -->
+            <th>작성자</th>
+            <th>조회수</th>
+          </tr>
+          <tr>
+            <td>자바공부 쉽게하는법!!</td> <!-- table data -->
+            <td>이쎄림</td>
+            <td>1756</td>
+          </tr>
+          <tr>
+            <td>알고리즘은 자바? 파이썬?</td>
+            <td>홍정밍</td>
+            <td>998</td>
+          </tr>
+          <tr>
+            <td>스프링 정복하기~</td>
+            <td>김나켠</td>
+            <td>856</td>
+          </tr>
+        </table>
+        </div>
+
+        <div class="new_table">
+        <h3>[ 최신글 ]</h3>
+        <table>
+          <tr>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>조회수</th>
+          </tr>
+          <tr>
+            <td>web 관련 질문있어요.</td>
+            <td>이주녕</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <td>vue.js는 이렇게 공부해보세요.</td>
+            <td>조밍기</td>
+            <td>998</td>
+          </tr>
+          <tr>
+            <td>꽃길만 걸어요.</td>
+            <td>류해면</td>
+            <td>856</td>
+          </tr>
+        </table>
+        </div>
+      </aside>
+      </div>
+    </main>
+
+    <footer>
+      <!-- 제작정보와 저작권 표시 등 footer에 포함 -->
+      <ul>
+        <li>
+          <a href="">카페소개&nbsp;</a>
+        </li>
+        <li>
+          <a href="">개인정보처리방침&nbsp;</a>
+        </li>
+        <li>
+          <a href="">이용약관&nbsp;</a>
+        </li>
+        <li>
+          <a href="">오시는길&nbsp;</a>
+        </li>
+        <!-- 카피라이트 : html 특수문자 코드 사용-->
+        <!-- 특수문자를 사용하지 않으면 웹 페이지 해석 오류 발생 가능 + 일관성, 가독성 훼손 -->
+        <li>&copy; SSAFY Corp.</li>
+      </ul>
+    </footer>
+  </body>
+</html>

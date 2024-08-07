@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		.vote_box{
+			display: flex;
+			flex-direction: column;
+			width: 400px;
+			/* height: 300px; */
+			border: solid 0.5px lightgray;
+			margin: 0 auto;
+		}
+		.vote_box div{
+			margin: 10px;
+			font-weight: bold;
+			color: navy;
+		}
+		.vote_box h2{
+			align-self: center;
+		}
+		#answer_btn, #delBtn{
+			background-color: white;
+			border: solid 0.3px lightgray;
+			width: 40px;
+			height: 30px;
+		}
+		#answer_form{
+			margin-top: 10px;
+		}
+		#vote_create{
+			align-self: center;
+			margin: 10px;
+		}
+		#vote_create input{
+			background-color: purple;
+			border: solid 0.3px;
+			color: white;
+			width: 65px;
+			height: 28px;
+		}
+
+	</style>
+</head>
+<body>
+	<div class="vote_box">
+		<h2 style="color: navy;">투표 만들기</h2>
+
+		<div id="date_box">
+			시작일 <input type="date" id="startDate">
+			종료일 <input type="date" id="endDate">
+		</div>
+
+		<div>
+			<!-- placeholder를 사용해서 예시를 보여줌, 입력 시 글자 사라짐 -->
+			질문 내용 <input type="text" id="question" placeholder="현재 공부하고 있는 지역은?">
+		</div>
+		
+		<div id="add_answer">
+			답변 항목 <input type="button" id="answer_btn" value="추가" onclick="javascript:addInput()"> <br/>
+			<input type="text" id="answer_form">
+		</div>
+
+		<div id="form"></div>
+
+		<div id="vote_create">
+			<input type="button" value="투표생성" onclick="javascript:storeVote()">
+		</div>
+	</div>
+
+	<script>
+		var answerList;
+		//투표 항목 추가
+		function addInput(){
+			let answerValue = document.getElementById("answer_form").value;
+			const newTagP = document.createElement("p");
+			newTagP.innerHTML = `<input type='text' class='answers' value=${answerValue} disabled> <input type='button' id='delBtn' value='삭제' onclick='javascript:delAnswer(this)'>`;
+			document.getElementById("form").appendChild(newTagP);
+		}
+
+		//투표 항목 삭제
+		function delAnswer(obj){
+			document.getElementById("form").removeChild(obj.parentNode);
+		}
+
+		//로컬스토리지에 투표 정보 저장
+		function storeVote(){
+			let startDate = document.getElementById("startDate").value;
+			let endDate = document.getElementById("endDate").value;
+			let question = document.getElementById("question").value;
+
+			let answer = document.getElementsByClassName("answers");
+			let values = [];
+			for (let idx = 0; idx < answer.length; idx++) {
+				values.push(`"${answer[idx].value}"`);
+			}
+
+			const pollData = {
+				startDate: startDate,
+				endDate: endDate,
+				question: question,
+				answers: values
+			};
+		
+			localStorage.setItem("poll", JSON.stringify(pollData));
+		}
+	</script>
+</body>
+</html>
