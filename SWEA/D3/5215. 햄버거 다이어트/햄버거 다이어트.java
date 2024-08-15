@@ -2,51 +2,53 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-/*
- * 1. 테스트 케이스 입력 받기
- * 2. 재료 수, 제한 칼로리 입력 받기
- * 3. 각 재료에 대한 맛 점수, 칼로리 배열에 입력 받기
- * 4. 재귀함수로 재료에 대한 조합 구하기
- * 	4-1. (기재조건) 칼로리가 1000이 넘는 경우, 더 이상 선택할 수 없는 경우
- * 		4-1-1. 현재 맛 점수, 칼로리와 best 맛 점수, 칼로리 비교
- *  4-2. (전처리) 전달 받은 인덱스부터 재료수 만큼 반복
- *  	4-2-1. 선택 안한 재료 선택, 선택했다고 표시
- *  	4-2-2. 현재 점수, 칼로리 계산
- *  4-3. (재귀) 현재 selectIndex + 1, elementIndex + 1을 인자로 넘기기
- *  4-4. (후처리:원상복구) 현재 맛 점수, 칼로리 복구, 방문표시 해제
- *   
+/* 1. 테스트 케이스 입력 받기
+ * 2. 데이터 입력 받기
+ * 	2-1. 재료 수, 제한 칼로리 입력 받기
+ * 	2-2. 각 재료에 대한 맛 점수, 칼로리 입력 받기
+ * 3. 모든 부분집합을 구할 재귀함수 호출
+ * 4. (기재조건)
+ *  4-1. 제한 칼로리를 넘긴 경우
+ *  4-2. 모든 요소를 고려한 경우
+ * 5. 해당 요소 사용 표시
+ * 	5-1. 현재 점수, 칼로리 계산, best 점수 갱신
+ * 	5-2. 다음 요소를 인자로 재귀 호출
+ * 6. 해당 요소 사용 표시X
+ * 	6-1. 현재 점수, 칼로리 계산 (재료가 추가되지 않아서 따로 점수 갱신x)
+ * 	6-2. 다음 요소를 인자로 재귀 호출
  */
-
-public class Solution {	
+public class Solution {
 	static BufferedReader br;
-	static StringBuilder sb;
 	static StringTokenizer st;
+	static StringBuilder sb;
+	
+	static int[][] foodInfo;
+	static boolean[] usedFood;
 	
 	static int foodCount;
 	static int maxCal;
 	
-	static int bestScore;
-	static int currentScore;
-	static int currentCal;
-	
-	static int[][] foodInfo; // 0: 맛 점수, 1: 칼로리
-	static boolean[] visitFood;
-	
+	static int bestScore = -1;
+	static int nowScore = 0;
+	static int nowCal = 0;
+
 	public static void main(String[] args) throws Exception {
 		br = new BufferedReader(new InputStreamReader(System.in));
+		st = new StringTokenizer(br.readLine());
 		sb = new StringBuilder();
 		
 		//1. 테스트 케이스 입력 받기
-		st = new StringTokenizer(br.readLine(), " ");
 		int test_case = Integer.parseInt(st.nextToken());
 		
-		for(int cnt = 1; cnt <= test_case; cnt++) {
-			sb.append("#").append(cnt).append(" ");
+		for(int testCase = 1; testCase <= test_case; testCase++) {
+			sb.append("#").append(testCase).append(" ");
 			
+			//2. 데이터 입력 받기
 			inputData();
-			combination(0, 0);
 			
-			//5. 재귀 후 해당 테스트 케이스의 결과 추가
+			//3. 모든 부분집합을 구할 재귀함수 호출
+			powerSet(0);
+			
 			sb.append(bestScore).append("\n");
 			bestScore = 0;
 		}
@@ -54,57 +56,54 @@ public class Solution {
 	}
 	
 	static void inputData() throws Exception {
-		//2. 재료 수, 제한 칼로리 입력 받기
-		st = new StringTokenizer(br.readLine(), " ");
+		//2-1. 재료 수, 제한 칼로리 입력 받기
+		st = new StringTokenizer(br.readLine());
 		foodCount = Integer.parseInt(st.nextToken());
 		maxCal = Integer.parseInt(st.nextToken());
 		
-		visitFood = new boolean[foodCount];
-		
-		//3. 각 재료에 대한 맛 점수, 칼로리 배열에 입력 받기
 		foodInfo = new int[foodCount][2];
+		usedFood = new boolean[foodCount];
+		
+		//2-2. 각 재료에 대한 맛 점수, 칼로리 입력 받기
 		for(int index = 0; index < foodCount; index++) {
-			st = new StringTokenizer(br.readLine(), " ");
-			foodInfo[index][0] = Integer.parseInt(st.nextToken());
-			foodInfo[index][1] = Integer.parseInt(st.nextToken());
+			st = new StringTokenizer(br.readLine());
+			foodInfo[index][0] = Integer.parseInt(st.nextToken()); //맛 점수
+			foodInfo[index][1] = Integer.parseInt(st.nextToken()); //칼로리
 		}
 	}
 	
-	//4. 재귀함수로 재료에 대한 조합 구하기
-	static void combination(int selectIndex, int elementIndex) {
-		
-		//4-1. (기재조건) 칼로리가 max를 넘는 경우, 더 이상 선택할 수 없는 경우
-		if(currentCal > maxCal || selectIndex == foodCount) {
+	static void powerSet(int selectIndex) {
+		//4. (기재조건)
+		//4-1. 제한 칼로리를 넘긴 경우
+		if(nowCal > maxCal) {
 			return;
 		}
 		
-		//4-2. (전처리) 전달 받은 인덱스부터 재료수 만큼 반복
-		for(int index = elementIndex; index < foodCount; index++) {
-			//4-2-1. 선택 안한 재료 선택,
-			if(visitFood[index] == true) {
-				continue; 
-			}
-			
-			//선택했다고 표시
-			visitFood[index] = true;
-			
-			//4-2-2. 현재 점수, 칼로리 계산
-			currentScore += foodInfo[index][0];
-			currentCal += foodInfo[index][1];
-			
-			//4-3. best 맛 점수 갱신
-			//현재 칼로리가 제한 칼로리보다 작을 때 갱신
-			if (currentCal <= maxCal) {
-				bestScore = Math.max(bestScore, currentScore);
-			}
-			
-			//4-4. (재귀) 현재 selectIndex + 1, elementIndex + 1을 인자로 넘기기
-			combination(selectIndex + 1, index + 1);
-			
-			//4-5. (후처리:원상복구) 현재 맛 점수, 칼로리 복구, 방문표시 해제
-			currentScore -= foodInfo[index][0];
-			currentCal -= foodInfo[index][1];
-			visitFood[index] = false;
+		//4-2. 모든 요소를 고려한 경우
+		if(selectIndex == foodCount) {
+			return;
 		}
+		
+		//5. 해당 요소 사용 표시
+		usedFood[selectIndex] = true;
+		//5-1. 현재 점수, 칼로리 계산, best 점수 갱신
+		nowScore += foodInfo[selectIndex][0];
+		nowCal += foodInfo[selectIndex][1];
+		
+		if(maxCal >= nowCal) {
+			bestScore = Math.max(nowScore, bestScore);
+		}
+		
+		//5-3. 다음 요소를 인자로 재귀 호출
+		powerSet(selectIndex + 1);
+
+		//6. 해당 요소 사용 표시X (+ 원상복구)
+		usedFood[selectIndex] = false;
+		//6-1. 현재 점수, 칼로리 계산
+		nowScore -= foodInfo[selectIndex][0];
+		nowCal -= foodInfo[selectIndex][1];
+		//6-2. 다음 요소를 인자로 재귀 호출
+		powerSet(selectIndex + 1);
 	}
+
 }
