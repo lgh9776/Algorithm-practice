@@ -18,7 +18,7 @@ public class Solution {
 		st = new StringTokenizer(br.readLine());
 		sb = new StringBuilder();
 		
-		//1. 숫자 2개 (firstNum, secondNum) 입력 받기
+		//1.정수 1개 (num) 입력 받기
 		int num = Integer.parseInt(st.nextToken());
 		
 		//2. n의 약수 구하기
