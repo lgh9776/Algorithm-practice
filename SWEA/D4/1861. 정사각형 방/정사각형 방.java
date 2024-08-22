@@ -27,9 +27,6 @@ public class Solution {
 	static int[][] map;
 	static boolean[][] isNotStart; //해당 좌표를 시작점으로 하는지
 	
-	static int[] deltaRow = {-1, 0, 1, 0}; //상하좌우 이동 시 row에 더할값
-	static int[] deltaCol = {0, 1, 0, -1}; //상하좌우 이동 시 col에 더할값
-	
 	static int startRoomNum;
 	static int maxCount;
 	static int maxStartRoomNum;
