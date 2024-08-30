@@ -1,20 +1,23 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /*
  * 1. 테스트 케이스 입력 받기
- * 2. 정점의 개수, 간선의 개수 입력 받기
- * 3. 간선 정보 입력 받기
- * 4. 가중치를 기준으로 간선 오름차순 정렬
- * 5. 최소 단위 서로소 집합으로 초기화 하기
- * 6. 가중치가 작은 간선부터 가져와 union
- * 	6-1. 루트가 같다면 pass
- * 7. union 가능하면 total가중치에 가중치 더하기
- * 8. 루트가 1개라면 1개의 트리 완성 -> break
- * 9. 가중치 출력
+ * 2. 정점, 간선의 개수 구하기
+ * 3. 간선 정보로 인접정보 저장
+ * 
+ * (프림 알고리즘 사용)
+ * 4. 트리 생성을 위해 시작점 우선순위 큐에 넣음
+ * 5. 공백큐가 될 때까지 반복
+ * 	5-1. 큐의 요소 poll
+ * 	5-2. 선택한 요소를 방문한적 없으면 (트리에 포함되지 않았으면)
+ * 	5-3. 뽑은 요소 방문 처리
+ * 	5-4. 전체 cost에 해당 요소의 가중치 더하기
+ * 	5-5. 뽑은 요소 기준 인접 정점이 방문을 안했으면
+ * 	5-6. 인접한 정점의 정보(도착점, 가중치 가짐)를 모두 우선순위 큐에 넣음 
+ * 6. 최소 비용 출력
  * 
  */
 
@@ -24,95 +27,96 @@ public class Solution {
 	static StringBuilder sb;
 	
 	static class Edge implements Comparable<Edge>{
-		int start, end, weight;
+		int vertex, weight;
 
-		public Edge(int start, int end, int weight) {
-			this.start = start;
-			this.end = end;
+		public Edge(int vertex, int weight) {
+			this.vertex = vertex;
 			this.weight = weight;
 		}
 
 		@Override
 		public int compareTo(Edge o) {
-			return Integer.compare(this.weight, o.weight);
+			return this.weight - o.weight > 0 ? 1 : -1;
 		}
 	}
 	
 	static int vCnt, eCnt;
-	static Edge[] edges;
-	static int[] parents;
+	static List<Edge>[] adj;
+	static boolean[] isVisit;
+	static long totalCost;
 	
 	public static void main(String[] args) throws IOException {
 		br = new BufferedReader(new InputStreamReader(System.in));
 		sb = new StringBuilder();
-	
+		
 		//1. 테스트 케이스 입력 받기
 		st = new StringTokenizer(br.readLine().trim());
 		int test_case = Integer.parseInt(st.nextToken());
-		for (int testCase = 1; testCase <= test_case; testCase++) {
-			sb.append("#").append(testCase).append(" ");
+		for (int tc = 1; tc <= test_case; tc++) {
+			sb.append("#").append(tc).append(" ");
+			
 			inputData();
 			
-			//4. 가중치를 기준으로 간선 오름차순 정렬
-			Arrays.sort(edges);
+			//(프림 알고리즘 사용)
+			prim();
 			
-			//5. 최소 단위 서로소 집합으로 초기화 하기
-			makeSet();
-			
-			//6. 가중치가 작은 간선부터 가져와 union
-			long totalWeight = 0;
-			for (int index = 0; index < eCnt; index++) {
-				if(union(edges[index].start, edges[index].end)) {
-					//7. union 가능하면 total가중치에 가중치 더하기
-					totalWeight += edges[index].weight;
-				}
-			}
-			
-			//9. 가중치 출력
-			sb.append(totalWeight).append("\n");
+			//6. 최소 비용 출력
+			sb.append(totalCost).append("\n");
 		}
 		System.out.print(sb);
 	}
 	
 	static void inputData() throws IOException {
-		//2. 정점의 개수, 간선의 개수 입력 받기
+		//2. 정점, 간선의 개수 구하기
 		st = new StringTokenizer(br.readLine().trim());
 		vCnt = Integer.parseInt(st.nextToken());
 		eCnt = Integer.parseInt(st.nextToken());
+		isVisit = new boolean[vCnt+1];
+		totalCost = 0;
 		
-		//3. 간선 정보 입력 받기
-		edges = new Edge[eCnt];
-		for (int index = 0; index < eCnt; index++) {
+		//3. 간선 정보로 인접정보 저장
+		adj = new ArrayList[vCnt+1];
+		for (int index = 0; index <= vCnt; index++) {
+			adj[index] = new ArrayList<>();
+		}
+		
+		for (int row = 0; row < eCnt; row++) {
 			st = new StringTokenizer(br.readLine().trim());
-			edges[index] = new Edge(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+			
+			int start = Integer.parseInt(st.nextToken());
+			int end = Integer.parseInt(st.nextToken());
+			int weight = Integer.parseInt(st.nextToken());
+			
+			adj[start].add(new Edge(end, weight));
+			adj[end].add(new Edge(start, weight));
 		}
 	}
 	
-	static boolean union(int first, int second) {
-		int firstRoot = findSet(first);
-		int secondRoot = findSet(second);
+	static void prim() {
+		//4. 트리 생성을 위해 시작점 우선순위 큐에 넣음
+		PriorityQueue<Edge> nextVertex = new PriorityQueue<>();
+		nextVertex.offer(new Edge(1, 0));
 		
-		//6-1. 루트가 같다면 pass
-		if(firstRoot == secondRoot)
-			return false;
-		
-		parents[firstRoot] += parents[secondRoot];
-		parents[secondRoot] = firstRoot;
-		return true;
-	}
-	
-	static int findSet(int num) {
-		if(parents[num] < 0){
-			return num;
-		}
-		
-		return parents[num] = findSet(parents[num]);
-	}
-	
-	static void makeSet() {
-		parents = new int[vCnt+1];
-		for (int index = 1; index <= vCnt; index++) {
-			parents[index] = -1;
+		//5. 공백큐가 될 때까지 반복
+		while(!nextVertex.isEmpty()) {
+			//5-1. 큐의 요소 poll
+			Edge start = nextVertex.poll();
+			
+			//5-2. 선택한 요소를 방문한적 없으면 (트리에 포함되지 않았으면)
+			if(!isVisit[start.vertex]) {
+				//5-3. 뽑은 요소 방문 처리
+				isVisit[start.vertex] = true;
+				
+				//5-4. 전체 cost에 해당 요소의 가중치 더하기
+				totalCost += start.weight;
+				
+				for(Edge next : adj[start.vertex]) {
+					//5-5. 뽑은 요소 기준 인접 정점이 방문을 안했으면
+					if(!isVisit[next.vertex])
+						//인접한 정점의 정보(도착점, 가중치 가짐)를 모두 우선순위 큐에 넣음 
+						nextVertex.offer(new Edge(next.vertex, next.weight));
+				}
+			}
 		}
 	}
 }
