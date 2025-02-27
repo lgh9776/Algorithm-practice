@@ -27,9 +27,28 @@ public class Main {
 			return;
 		}
 		
-		// 3. 1번 용액 고정 후 이분탐색으로 2번 용액과 합이 0에 가까운 것 갱신
-		for (int i = 0; i < solCnt; i++) {
-			binarySearch(i);
+		// 3. 용액이 정렬되어 입력되므로 배열의 시작과 끝에서 비교하여 0에 가까운 값 찾기
+		int left = 0;
+		int right = solCnt-1;
+		while(left < right) {
+			long sum = solution[left] + solution[right];
+			
+			if(Math.abs(sum) <= minDiff) {
+				result1 = solution[left];
+				result2 = solution[right];
+				minDiff = Math.abs(sum);
+				
+				if(sum == 0) {
+					break;
+				}
+			}
+			
+			if(sum < 0) {
+				left++;
+			}
+			else if(sum > 0) {
+				right--;
+			}
 		}
 		
 		System.out.println(result1 + " " + result2);
@@ -47,34 +66,5 @@ public class Main {
 		}
 		
 		minDiff = Integer.MAX_VALUE;
-	}
-	
-	static void binarySearch(int idx) {
-		int start = idx+1;
-		int end = solCnt-1;
-		long num1 = solution[idx];
-		
-		int mid = 0;
-		while(start <= end) {
-			mid = start + (end - start) / 2;
-			
-			long sum = num1 + solution[mid];
-			if(minDiff >= Math.abs(sum)) {
-				minDiff = Math.abs(sum);
-				result1 = num1;
-				result2 = solution[mid];
-				
-				if(sum == 0) {
-					return;
-				}
-			}
-			
-			if(sum < 0) {
-				start = mid + 1;
-			}
-			else if(sum > 0) {
-				end = mid - 1;
-			}
-		}
 	}
 }
