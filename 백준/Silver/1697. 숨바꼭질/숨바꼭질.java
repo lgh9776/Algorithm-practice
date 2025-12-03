@@ -14,7 +14,6 @@ import java.util.StringTokenizer;
  * 	2-2. +1, -1로 걷는 경우, 순간이동 하는 경우가 방문되지 않았으면 큐에 넣기
  * 	2-3. 시간 계산
  * 3. 시간 출력
- * 
  */
 
 public class Main {
