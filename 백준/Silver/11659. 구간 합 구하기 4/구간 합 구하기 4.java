@@ -44,8 +44,6 @@ public class Main {
 			int endNum = Integer.parseInt(st.nextToken());
 			
 			//4-2. j누적합 - (i-1)누적합 = i ~ j까지의 합
-			//누적합으로 구하려면 j번째까지 합에서 i-1번째까지 합을 빼줘야함
-			//=> i번째와 j번째를 포함한 것을 구할 수 있음
 			sb.append(sumArr[endNum]-sumArr[startNum - 1]).append("\n");
 		}
 		System.out.print(sb);
