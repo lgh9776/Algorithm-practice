@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
  * 	1-1. elementCnt에 요소 수 입력 받기
  * 	1-2. len에 수열의 길이 입력 받기
  * 2. 요소에 대한 조합을 구하는 재귀함수 호출
- * 3. (기재조건) 더 이상 선택할 수 없으면 return (selectIndex == len)
+ * 3. (탈출조건) 더 이상 선택할 수 없으면 return (selectIndex == len)
  * 	3-1. select할 수 있는 요소가 부족할 경우 return
  * 4. (전처리) 이전 depth에서 선택하지 않은 곳부터 탐색
  * 	4-1. 요소를 선택할 수 있으면 조합에 추가
@@ -51,7 +51,7 @@ public class Main {
 	}
 	
 	static void combination(int selectIndex, int elementIndex) {
-		//3. (기재조건) 더 이상 선택할 수 없으면 return
+		//3. (탈출조건) 더 이상 선택할 수 없으면 return
 		if(selectIndex == len) {
 			for(int element : select) {
 				sb.append(element).append(" ");
